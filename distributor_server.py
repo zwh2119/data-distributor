@@ -31,19 +31,22 @@ class DistributorServer:
             allow_methods=["*"], allow_headers=["*"],
         )
 
+    def record_process_data(self):
+        pass
+
     def distribute_data(self, data):
-        # pipeline = data['pipeline_flow']
-        # tmp_data = data['tmp_data']
-        # index = data['cur_flow_index']
-        # content = data['content_data']
-        # scenario = data['scenario_data']
-        #
-        # # record transmit time
-        # tmp_data, transmit_time = record_time(tmp_data, f'transmit_time_{index}')
-        # # assert transmit_time != 0
-        # pipeline[index]['execute_data']['transmit_time'] = transmit_time
-        #
-        # print(f'new result: {scenario["obj_num"]}')
+        pipeline = data['pipeline_flow']
+        tmp_data = data['tmp_data']
+        index = data['cur_flow_index']
+        content = data['content_data']
+        scenario = data['scenario_data']
+
+        # record transmit time
+        tmp_data, transmit_time = record_time(tmp_data, f'transmit_time_{index}')
+        assert transmit_time != 0
+        pipeline[index]['execute_data']['transmit_time'] = transmit_time
+
+        print(f'new result: {scenario["obj_num"]}')
 
         num = data['result']
         # num = result['parameters']['obj_num']
