@@ -6,11 +6,14 @@ from starlette.requests import Request
 from fastapi.middleware.cors import CORSMiddleware
 
 import numpy as np
+import os
+import json
 
 from utils import record_time
 
 # TODO: deprecate this method in a later version
 from set_environment import set_environment
+
 
 # set_environment()
 
@@ -31,8 +34,19 @@ class DistributorServer:
             allow_methods=["*"], allow_headers=["*"],
         )
 
-    def record_process_data(self):
-        pass
+    # TODO: check if the editing of file will conflict (multi-process in gunicorn)
+    def record_process_data(self, source_id, task_id, content_data):
+        file_path = f'data_record_source_{source_id}.json'
+        if os.path.exists(file_path):
+            with open(file_path, 'r') as f:
+                data = json.load(f)
+        else:
+            data = {}
+
+        data[task_id] = content_data
+
+        with open(file_path, 'w') as f:
+            json.dump(data, f)
 
     def distribute_data(self, data):
         pipeline = data['pipeline_flow']
@@ -53,6 +67,8 @@ class DistributorServer:
         source_id = data['source_id']
         task_id = data['task_id']
         print(f'source:{source_id}, task:{task_id}, average car: {np.mean(num)}')
+
+        self.record_process_data()
 
         # TODO: post data to aggregator
 
