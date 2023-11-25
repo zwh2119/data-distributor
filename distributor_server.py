@@ -55,20 +55,19 @@ class DistributorServer:
         content = data['content_data']
         scenario = data['scenario_data']
 
-        # record transmit time
+        # end record transmit time
         tmp_data, transmit_time = record_time(tmp_data, f'transmit_time_{index}')
-        assert transmit_time != 0
+        assert transmit_time != -1
         pipeline[index]['execute_data']['transmit_time'] = transmit_time
 
-        print(f'new result: {scenario["obj_num"]}')
-
-        num = data['result']
-        # num = result['parameters']['obj_num']
+        num = np.mean(scenario['obj_num'])
+        size = np.mean(scenario['obj_size'])
         source_id = data['source_id']
         task_id = data['task_id']
-        print(f'source:{source_id}, task:{task_id}, average car: {np.mean(num)}')
+        print(f'source:{source_id}, task:{task_id}, average car: {num}')
 
-        self.record_process_data()
+        record_data = {'obj_num': num, 'obj_size': size, 'pipeline': pipeline}
+        self.record_process_data(source_id, task_id, record_data)
 
         # TODO: post data to aggregator
 
