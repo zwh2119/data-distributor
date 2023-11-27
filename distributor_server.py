@@ -1,3 +1,4 @@
+import requests
 from fastapi import FastAPI, BackgroundTasks
 
 from fastapi.routing import APIRoute
@@ -9,13 +10,9 @@ import numpy as np
 import os
 import json
 
-from utils import record_time
+from utils import *
 
-# TODO: deprecate this method in a later version
-from set_environment import set_environment
-
-
-# set_environment()
+scheduler_ip = '114.212.81.11'
 
 
 class DistributorServer:
@@ -34,9 +31,14 @@ class DistributorServer:
             allow_methods=["*"], allow_headers=["*"],
         )
 
+        self.record_dir = 'data_record'
+        self.scheduler_address = get_merge_address(scheduler_ip, port=8140, path='scenario')
+
     # TODO: check if the editing of file will conflict (multi-process in gunicorn)
     def record_process_data(self, source_id, task_id, content_data):
-        file_path = f'data_record_source_{source_id}.json'
+        file_name = f'data_record_source_{source_id}.json'
+        file_path = os.path.join(self.record_dir, file_name)
+
         if os.path.exists(file_path):
             with open(file_path, 'r') as f:
                 data = json.load(f)
@@ -70,6 +72,7 @@ class DistributorServer:
         self.record_process_data(source_id, task_id, record_data)
 
         # TODO: post data to aggregator
+        requests.post(self.scheduler_address, json={})
 
     async def deal_response(self, request: Request, backtask: BackgroundTasks):
         data = await request.json()
