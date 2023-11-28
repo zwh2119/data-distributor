@@ -1,4 +1,5 @@
 import time
+import socket
 
 
 def record_time(data: dict, time_sign: str):
