@@ -13,6 +13,7 @@ import json
 from utils import *
 
 scheduler_ip = '114.212.81.11'
+scheduler_port = 8140
 
 
 class DistributorServer:
@@ -32,7 +33,7 @@ class DistributorServer:
         )
 
         self.record_dir = 'data_record'
-        self.scheduler_address = get_merge_address(scheduler_ip, port=8140, path='scenario')
+        self.scheduler_address = get_merge_address(scheduler_ip, port=scheduler_port, path='scenario')
 
     # TODO: check if the editing of file will conflict (multi-process in gunicorn)
     def record_process_data(self, source_id, task_id, content_data):
@@ -66,13 +67,15 @@ class DistributorServer:
         size = np.mean(scenario['obj_size'])
         source_id = data['source_id']
         task_id = data['task_id']
+        meta_data = data['meta_data']
         print(f'source:{source_id}, task:{task_id}, average car: {num}')
 
         record_data = {'obj_num': num, 'obj_size': size, 'pipeline': pipeline}
         self.record_process_data(source_id, task_id, record_data)
 
-        # TODO: post data to aggregator
-        requests.post(self.scheduler_address, json={})
+        # post scenario data to scheduler
+        requests.post(self.scheduler_address, json={'source_id': source_id, 'pipeline': pipeline,
+                                                    'obj_num': num, 'obj_size': size, 'meta_data': meta_data})
 
     async def deal_response(self, request: Request, backtask: BackgroundTasks):
         data = await request.json()
