@@ -74,8 +74,10 @@ class DistributorServer:
         self.record_process_data(source_id, task_id, record_data)
 
         # post scenario data to scheduler
-        requests.post(self.scheduler_address, json={'source_id': source_id, 'pipeline': pipeline,
-                                                    'obj_num': num, 'obj_size': size, 'meta_data': meta_data})
+        requests.post(self.scheduler_address, json={'source_id': source_id, 'scenario': {'pipeline': pipeline,
+                                                                                         'obj_num': num,
+                                                                                         'obj_size': size,
+                                                                                         'meta_data': meta_data}})
 
     async def deal_response(self, request: Request, backtask: BackgroundTasks):
         data = await request.json()
