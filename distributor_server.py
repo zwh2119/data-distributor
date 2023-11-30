@@ -33,6 +33,9 @@ class DistributorServer:
         )
 
         self.record_dir = 'data_record'
+        if not os.path.exists(self.record_dir):
+            os.mkdir(self.record_dir)
+
         self.scheduler_address = get_merge_address(scheduler_ip, port=scheduler_port, path='scenario')
 
     # TODO: check if the editing of file will conflict (multi-process in gunicorn)
