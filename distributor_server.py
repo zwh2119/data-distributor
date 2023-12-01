@@ -15,6 +15,7 @@ from utils import *
 scheduler_ip = '114.212.81.11'
 scheduler_port = 8140
 
+record_dir = 'data_record'
 
 class DistributorServer:
     def __init__(self):
@@ -32,7 +33,7 @@ class DistributorServer:
             allow_methods=["*"], allow_headers=["*"],
         )
 
-        self.record_dir = 'data_record'
+        self.record_dir = record_dir
         if not os.path.exists(self.record_dir):
             os.mkdir(self.record_dir)
 
