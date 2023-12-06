@@ -1,3 +1,5 @@
+import shutil
+
 import requests
 from fastapi import FastAPI, BackgroundTasks
 
@@ -35,6 +37,9 @@ class DistributorServer:
 
         self.record_dir = record_dir
         if not os.path.exists(self.record_dir):
+            os.mkdir(self.record_dir)
+        else:
+            shutil.rmtree(self.record_dir)
             os.mkdir(self.record_dir)
 
         self.scheduler_address = get_merge_address(scheduler_ip, port=scheduler_port, path='scenario')
@@ -74,7 +79,7 @@ class DistributorServer:
         meta_data = data['meta_data']
         print(f'source:{source_id}, task:{task_id}, average car: {num}')
 
-        record_data = {'obj_num': num, 'obj_size': size, 'pipeline': pipeline}
+        record_data = {'obj_num': num, 'obj_size': size, 'pipeline': pipeline, 'meta_data':meta_data}
         self.record_process_data(source_id, task_id, record_data)
 
         # post scenario data to scheduler
