@@ -46,18 +46,11 @@ class DistributorServer:
 
         self.scheduler_address = get_merge_address(scheduler_ip, port=scheduler_port, path=scheduler_path)
 
-    # TODO: check if the editing of file will conflict (multi-process in gunicorn)
     def record_process_data(self, source_id, task_id, content_data):
-        file_name = f'data_record_source_{source_id}.json'
+        file_name = f'data_record_source_{source_id}_task_{task_id}_{int(time.time())}.json'
         file_path = os.path.join(self.record_dir, file_name)
 
-        if os.path.exists(file_path):
-            with open(file_path, 'r') as f:
-                data = json.load(f)
-        else:
-            data = {}
-
-        data[task_id] = content_data
+        data = content_data
 
         with open(file_path, 'w') as f:
             json.dump(data, f)
