@@ -16,8 +16,10 @@ from utils import *
 
 scheduler_ip = '114.212.81.11'
 scheduler_port = 8140
+scheduler_path = 'scenario'
 
 record_dir = 'data_record'
+
 
 class DistributorServer:
     def __init__(self):
@@ -42,7 +44,7 @@ class DistributorServer:
             shutil.rmtree(self.record_dir)
             os.mkdir(self.record_dir)
 
-        self.scheduler_address = get_merge_address(scheduler_ip, port=scheduler_port, path='scenario')
+        self.scheduler_address = get_merge_address(scheduler_ip, port=scheduler_port, path=scheduler_path)
 
     # TODO: check if the editing of file will conflict (multi-process in gunicorn)
     def record_process_data(self, source_id, task_id, content_data):
@@ -79,7 +81,7 @@ class DistributorServer:
         meta_data = data['meta_data']
         print(f'source:{source_id}, task:{task_id}, average car: {num}')
 
-        record_data = {'obj_num': num, 'obj_size': size, 'pipeline': pipeline, 'meta_data':meta_data}
+        record_data = {'obj_num': num, 'obj_size': size, 'pipeline': pipeline, 'meta_data': meta_data}
         self.record_process_data(source_id, task_id, record_data)
 
         # post scenario data to scheduler
