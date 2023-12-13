@@ -1,6 +1,5 @@
 import shutil
 
-import requests
 from fastapi import FastAPI, BackgroundTasks
 
 from fastapi.routing import APIRoute
@@ -14,6 +13,7 @@ import json
 
 from utils import *
 from log import LOGGER
+from client import http_request
 
 scheduler_ip = '114.212.81.11'
 scheduler_port = 8140
@@ -79,10 +79,11 @@ class DistributorServer:
         self.record_process_data(source_id, task_id, record_data)
 
         # post scenario data to scheduler
-        requests.post(self.scheduler_address, json={'source_id': source_id, 'scenario': {'pipeline': pipeline,
-                                                                                         'obj_num': num,
-                                                                                         'obj_size': size,
-                                                                                         'meta_data': meta_data}})
+        http_request(url=self.scheduler_address, method='POST',
+                     json={'source_id': source_id, 'scenario': {'pipeline': pipeline,
+                                                                'obj_num': num,
+                                                                'obj_size': size,
+                                                                'meta_data': meta_data}})
 
     async def deal_response(self, request: Request, backtask: BackgroundTasks):
         data = await request.json()
