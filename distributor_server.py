@@ -13,6 +13,7 @@ import os
 import json
 
 from utils import *
+from log import LOGGER
 
 scheduler_ip = '114.212.81.11'
 scheduler_port = 8140
@@ -72,7 +73,7 @@ class DistributorServer:
         source_id = data['source_id']
         task_id = data['task_id']
         meta_data = data['meta_data']
-        print(f'source:{source_id}, task:{task_id}, average car: {num}')
+        LOGGER.info(f'source:{source_id}, task:{task_id}, average object number: {num}')
 
         record_data = {'obj_num': num, 'obj_size': size, 'pipeline': pipeline, 'meta_data': meta_data}
         self.record_process_data(source_id, task_id, record_data)
