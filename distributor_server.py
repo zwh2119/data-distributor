@@ -63,6 +63,8 @@ class DistributorServer:
         content = data['content_data']
         scenario = data['scenario_data']
 
+
+
         # end record transmit time
         tmp_data, transmit_time = record_time(tmp_data, f'transmit_time_{index}')
         assert transmit_time != -1
@@ -73,6 +75,11 @@ class DistributorServer:
         source_id = data['source_id']
         task_id = data['task_id']
         meta_data = data['meta_data']
+
+        if content == 'discard':
+            LOGGER.info(f'discard package: source {source_id} /task {task_id}')
+            return
+
         LOGGER.info(f'source:{source_id}, task:{task_id}, average object number: {num}')
 
         record_data = {'obj_num': num, 'obj_size': size, 'pipeline': pipeline, 'meta_data': meta_data}
