@@ -16,10 +16,9 @@ from log import LOGGER
 from client import http_request
 
 scheduler_ip = '114.212.81.11'
-scheduler_port = 8140
-scheduler_path = 'scenario'
-
 record_dir = 'data_record'
+
+scheduler_port = 9400
 
 
 class DistributorServer:
@@ -45,7 +44,7 @@ class DistributorServer:
             shutil.rmtree(self.record_dir)
             os.mkdir(self.record_dir)
 
-        self.scheduler_address = get_merge_address(scheduler_ip, port=scheduler_port, path=scheduler_path)
+        self.scheduler_address = get_merge_address(scheduler_ip, port=scheduler_port, path='scenario')
 
     def record_process_data(self, source_id, task_id, content_data):
         file_name = f'data_record_source_{source_id}_task_{task_id}_{int(time.time())}.json'
