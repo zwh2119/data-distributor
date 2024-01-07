@@ -62,15 +62,11 @@ class DistributorServer:
         content = data['content_data']
         scenario = data['scenario_data']
 
-
-
         # end record transmit time
         tmp_data, transmit_time = record_time(tmp_data, f'transmit_time_{index}')
         assert transmit_time != -1
         pipeline[index]['execute_data']['transmit_time'] = transmit_time
 
-        num = np.mean(scenario['obj_num'])
-        size = np.mean(scenario['obj_size'])
         source_id = data['source_id']
         task_id = data['task_id']
         meta_data = data['meta_data']
@@ -78,6 +74,9 @@ class DistributorServer:
         if content == 'discard':
             LOGGER.info(f'discard package: source {source_id} /task {task_id}')
             return
+
+        num = np.mean(scenario['obj_num'])
+        size = np.mean(scenario['obj_size'])
 
         LOGGER.info(f'source:{source_id}, task:{task_id}, average object number: {num}')
 
