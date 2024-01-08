@@ -38,7 +38,7 @@ class DistributorServer:
 
         self.record_dir = Context.get_parameters('output_dir')
         if not os.path.exists(self.record_dir):
-            os.mkdir(self.record_dir)
+            os.makedirs(self.record_dir)
         else:
             shutil.rmtree(self.record_dir)
             os.mkdir(self.record_dir)
