@@ -14,11 +14,7 @@ import json
 from utils import *
 from log import LOGGER
 from client import http_request
-
-scheduler_ip = '114.212.81.11'
-record_dir = 'data_record'
-
-scheduler_port = 9400
+from config import Context
 
 
 class DistributorServer:
@@ -37,14 +33,17 @@ class DistributorServer:
             allow_methods=["*"], allow_headers=["*"],
         )
 
-        self.record_dir = record_dir
+        self.scheduler_port = Context.get_parameters('scheduler_port')
+        self.scheduler_ip = get_nodes_info()[Context.get_parameters('scheduler_name')]
+
+        self.record_dir = Context.get_parameters('output_dir')
         if not os.path.exists(self.record_dir):
             os.mkdir(self.record_dir)
         else:
             shutil.rmtree(self.record_dir)
             os.mkdir(self.record_dir)
 
-        self.scheduler_address = get_merge_address(scheduler_ip, port=scheduler_port, path='scenario')
+        self.scheduler_address = get_merge_address(self.scheduler_ip, port=self.scheduler_port, path='scenario')
 
     def record_process_data(self, source_id, task_id, content_data):
         file_name = f'data_record_source_{source_id}_task_{task_id}_{int(time.time())}.json'
