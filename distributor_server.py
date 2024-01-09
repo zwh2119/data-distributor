@@ -84,7 +84,10 @@ class DistributorServer:
 
         LOGGER.info(f'source:{source_id}, task:{task_id}, average object number: {num}')
 
-        record_data = {'obj_num': num, 'obj_size': size, 'pipeline': pipeline, 'meta_data': meta_data}
+        record_data = {'source': source_id, 'task': task_id,
+                       'obj_num': num, 'obj_size': size,
+                       'pipeline': pipeline,
+                       'meta_data': meta_data}
         self.record_process_data(source_id, task_id, record_data)
 
         # post scenario data to scheduler
@@ -121,7 +124,9 @@ class DistributorServer:
         files = self.find_record_by_time(data['time_ticket'])
         if len(files) > data['size']:
             files = files[:data['size']]
-        return {'result': self.extract_record(files), 'size': len(files)}
+        return {'result': self.extract_record(files),
+                'time_ticket': int(files[-1].split('.')[0].split('_')[6]) if len(files) > 0 else data['time_ticket'],
+                'size': len(files)}
 
 
 server = DistributorServer()
