@@ -46,7 +46,7 @@ class DistributorServer:
             os.makedirs(self.record_dir)
         else:
             shutil.rmtree(self.record_dir, ignore_errors=True)
-            os.mkdir(self.record_dir)
+            os.makedirs(self.record_dir)
 
         self.scheduler_address = get_merge_address(self.scheduler_ip, port=self.scheduler_port, path='scenario')
 
