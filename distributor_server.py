@@ -26,6 +26,11 @@ class DistributorServer:
                      methods=['POST']
 
                      ),
+            APIRoute('/result',
+                     self.query_result,
+                     response_class=JSONResponse,
+                     methods=['GET']
+                     ),
         ], log_level='trace', timeout=6000)
 
         self.app.add_middleware(
@@ -40,7 +45,7 @@ class DistributorServer:
         if not os.path.exists(self.record_dir):
             os.makedirs(self.record_dir)
         else:
-            shutil.rmtree(self.record_dir)
+            shutil.rmtree(self.record_dir, ignore_errors=True)
             os.mkdir(self.record_dir)
 
         self.scheduler_address = get_merge_address(self.scheduler_ip, port=self.scheduler_port, path='scenario')
@@ -93,6 +98,30 @@ class DistributorServer:
         data = await request.json()
         backtask.add_task(self.distribute_data, data)
         return {'msg': 'data send success!'}
+
+    def find_record_by_time(self, time_begin):
+        file_list = []
+        for file in os.listdir(self.record_dir):
+            if file.startswith('data_record'):
+                if int(file.split('.')[0].split('_')[6]) > time_begin:
+                    file_list.append(file)
+        file_list.sort(key=lambda x: int(x.split('.')[0].split('_')[6]))
+        return file_list
+
+    def extract_record(self, files):
+        content = []
+        for file in files:
+            file_path = os.path.join(self.record_dir, file)
+            with open(file_path, 'r') as f:
+                content.append(json.load(f))
+        return content
+
+    async def query_result(self, request: Request):
+        data = await request.json()
+        files = self.find_record_by_time(data['time_ticket'])
+        if len(files) > data['size']:
+            files = files[:data['size']]
+        return {'result': self.extract_record(files), 'size': len(files)}
 
 
 server = DistributorServer()
